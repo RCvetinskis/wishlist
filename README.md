@@ -20,6 +20,9 @@ The deploy script builds the framework output, provisions Prisma Postgres when s
 
 The starter users are inserted idempotently from `src/prisma/seed.ts` on the first database query through the Composer service binding.
 
+## Languages
+
+The interface supports English and Lithuanian. It follows a saved language choice when present, otherwise it detects the browser language and defaults to Lithuanian. Use the language selector in the top-right corner to switch languages.
 
 ## Prisma
 

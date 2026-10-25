@@ -1,21 +1,55 @@
 // use prisma-8
 
+enum Status {
+  guest
+  owner
+}
 model User {
   id        Int      @id @default(autoincrement())
-  email     String   @unique
-  username  String?
-  name      String?
-  posts     Post[]
+  username  String    @unique
+  status        Status   @default(guest)
+
+  posts     Post[]   @relation("PostAuthor")
+  reservedPosts Post[] @relation("PostReservation")
+  sessions     Session[]
+  
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
+}
+
+model Session {
+  id        String   @id @onCreate(cuid(2))
+  tokenHash String   @unique
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt TimestamptzString
+  createdAt TimestamptzString @default(now())
 }
 
 model Post {
   id        Int      @id @default(autoincrement())
   title     String
   content   String?
-  author    User     @relation(fields: [authorId], references: [id])
+  itemUrl   String?
+  imageUrl  String?
+  image PostImage?
+  
+  author    User     @relation("PostAuthor", fields: [authorId], references: [id])
   authorId  Int
+
+  reservedBy   User? @relation("PostReservation", fields: [reservedById], references: [id])
+  reservedById Int?
+
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
+}
+
+model PostImage {
+  id          Int      @id @default(autoincrement())
+  postId      Int      @unique
+  data        Bytes
+  contentType String
+  createdAt   TimestamptzString @default(now())
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 }

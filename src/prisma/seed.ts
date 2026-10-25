@@ -1,29 +1,34 @@
 import { connectDatabase, db } from "./db.ts";
 
-const users = [
-  { email: "alice@prisma.io", username: "alice", name: "Alice" },
-  { email: "bob@prisma.io", username: "bob", name: "Bob" },
-  { email: "carol@prisma.io", username: "carol", name: "Carol" },
-];
-
-let pendingSeed: Promise<void> | undefined;
-
-async function runSeed(): Promise<void> {
+async function main() {
   await connectDatabase();
 
-  for (const user of users) {
-    await db.orm.public.User.upsert({
-      create: user,
-      update: {},
-      conflictOn: { email: user.email },
-    });
+  const username = "nastia".trim().toLowerCase();
+
+  const existingUser = await db.orm.public.User.whereUnique({
+    username,
+  }).first();
+
+  if (existingUser) {
+    if (existingUser.status !== "owner") {
+      await db.orm.public.User.where({ id: existingUser.id }).update({
+        status: "owner",
+      });
+    }
+
+    console.log(`User "${username}" is an owner.`);
+    return;
   }
+
+  await db.orm.public.User.create({
+    username,
+    status: "owner",
+  });
+
+  console.log(`Created owner "${username}".`);
 }
 
-export function seed(): Promise<void> {
-  pendingSeed ??= runSeed().catch((error: unknown) => {
-    pendingSeed = undefined;
-    throw error;
-  });
-  return pendingSeed;
-}
+main().catch((error) => {
+  console.error(error);
+  process.exitCode = 1;
+});

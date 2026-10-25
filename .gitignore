@@ -1,5 +1,47 @@
+# Dependencies
 node_modules/
+
+# Next.js build output
+.next/
+out/
 dist/
+build/
+next-env.d.ts
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# Environment variables and secrets
 .env
-/.alchemy
-/.prisma-composer
+.env.*
+!.env.example
+!.env.template
+
+# Prisma local state and generated files
+/.alchemy/
+/.prisma-composer/
+/.prisma/
+/src/prisma/generated/
+
+# TypeScript
+*.tsbuildinfo
+
+# Test and coverage output
+coverage/
+
+# Deployment
+.vercel/
+
+# Editor and operating system files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Local certificates and keys
+*.pem
+*.key
