@@ -11,17 +11,28 @@ export async function GET(
     return new Response("Invalid post ID", { status: 400 });
   }
 
-  const image = await db.orm.public.PostImage.where({ postId }).first();
+  const image = await db.sql.public.PostImage
+    .select("contentType")
+    .select(
+      "encodedData",
+      (fields, functions) =>
+        functions.raw`encode(${fields.data}, 'base64')`.returns("pg/text@1"),
+    )
+    .where((fields, functions) => functions.eq(fields.postId, postId))
+    .build();
+  const [imageRow] = await db.query(image);
 
-  if (!image) {
+  if (!imageRow) {
     return new Response("Image not found", { status: 404 });
   }
 
-  const body = new Uint8Array(image.data).buffer;
+  const bytes = Buffer.from(imageRow.encodedData, "base64");
+  const body = new ArrayBuffer(bytes.byteLength);
+  new Uint8Array(body).set(bytes);
 
   return new Response(body, {
     headers: {
-      "Content-Type": image.contentType,
+      "Content-Type": imageRow.contentType,
       "Cache-Control": "private, max-age=3600",
     },
   });

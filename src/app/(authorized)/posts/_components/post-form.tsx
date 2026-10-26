@@ -166,7 +166,7 @@ const PostForm = ({ initialPost }: PostFormProps) => {
             initialPreviewUrl={
               imageChanged ? undefined : initialPost?.imagePreviewUrl
             }
-            maxSizeMB={4}
+            maxSizeMB={20}
           />
 
           {error && (

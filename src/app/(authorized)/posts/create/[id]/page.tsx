@@ -21,7 +21,9 @@ const EditPostPage = async ({ params }: Props) => {
     notFound();
   }
 
-  const post = await db.orm.public.Post.include("image")
+  const post = await db.orm.public.Post.include("image", (image) =>
+    image.select("id"),
+  )
     .where({ id: postId })
     .first();
 

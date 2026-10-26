@@ -19,13 +19,11 @@ export async function getPosts(page = 1, search = "") {
   }
 
   const results = await collection
-    .include("image")
+    .include("image", (image) => image.select("id"))
     .include("author")
-    .include("reservedBy")
     .orderBy([
-      (post) => post.reservedById.asc(),
+      (post) => post.reservedById.desc(),
       (post) => post.createdAt.desc(),
-      (post) => post.id.desc(),
     ])
     .limit(POSTS_PER_PAGE + 1)
     .offset((safePage - 1) * POSTS_PER_PAGE)
@@ -49,13 +47,11 @@ export async function getCurrentUserPosts(page = 1, search = "") {
   }
 
   const results = await collection
-    .include("image")
+    .include("image", (image) => image.select("id"))
     .include("author")
-    .include("reservedBy")
     .orderBy([
-      (post) => post.reservedById.asc(),
+      (post) => post.reservedById.desc(),
       (post) => post.createdAt.desc(),
-      (post) => post.id.desc(),
     ])
     .limit(POSTS_PER_PAGE + 1)
     .offset((safePage - 1) * POSTS_PER_PAGE)

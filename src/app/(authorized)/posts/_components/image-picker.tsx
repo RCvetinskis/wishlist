@@ -19,7 +19,13 @@ type ImagePickerProps = {
 
 type ImageMode = "upload" | "url";
 
-const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const ACCEPTED_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/heic",
+  "image/heif",
+];
 
 export default function ImagePicker({
   value,
@@ -112,7 +118,7 @@ export default function ImagePicker({
         <Button
           type="button"
           variant={mode === "upload" ? "secondary" : "outline"}
-          className="h-auto justify-start gap-2 py-3"
+          className="h-auto text-xs justify-start gap-2 py-3"
           onClick={() => switchMode("upload")}
         >
           <Upload className="size-4 shrink-0" />
@@ -120,9 +126,10 @@ export default function ImagePicker({
         </Button>
 
         <Button
+          size={"lg"}
           type="button"
           variant={mode === "url" ? "secondary" : "outline"}
-          className="h-auto justify-start gap-2 py-3"
+          className="h-auto text-xs justify-start gap-2 py-3"
           onClick={() => switchMode("url")}
         >
           <Link2 className="size-4 shrink-0" />
@@ -151,7 +158,7 @@ export default function ImagePicker({
           <input
             ref={fileInputRef}
             type="file"
-            accept="image/jpeg,image/png,image/webp"
+            accept="image/*"
             className="hidden"
             onChange={(event) => selectFile(event.target.files?.[0])}
           />

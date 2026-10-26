@@ -174,5 +174,42 @@
       ellipse at 18% 100%,
       color-mix(in oklch, var(--primary) 9%, transparent),
       transparent 42rem
-    );
+    ),
+    linear-gradient(
+      90deg,
+      var(--background) 0%,
+      color-mix(in oklch, var(--background) 86%, transparent) 48%,
+      color-mix(in oklch, var(--background) 28%, transparent) 100%
+    ),
+    url("/images/hero.jpeg");
+  background-repeat: repeat;
+  background-position:
+    center,
+    center,
+    center,
+    center,
+    right top;
+  background-size:
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    100% 100%,
+    min(52vw, 46rem) auto;
+}
+
+@media (max-width: 640px) {
+  .app-background {
+    background-position:
+      center,
+      center,
+      center,
+      center,
+      right top 4rem;
+    background-size:
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      100% 100%,
+      24rem auto;
+  }
 }

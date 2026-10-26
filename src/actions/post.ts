@@ -4,6 +4,15 @@ import { revalidatePath } from "next/cache";
 import { db } from "../prisma/db";
 import { getCurrentUser } from "../services/users";
 
+const MAX_IMAGE_SIZE = 20 * 1024 * 1024;
+const ALLOWED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/heic",
+  "image/heif",
+];
+
 export type CreatePostParams = {
   title: string;
   content?: string;
@@ -179,21 +188,20 @@ export async function UpdatePost(
 
     let imageData: Uint8Array | undefined;
     if (params.imageFile) {
-      const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
-      if (!allowedTypes.includes(params.imageFile.type)) {
+      if (!ALLOWED_IMAGE_TYPES.includes(params.imageFile.type)) {
         return {
           success: false,
-          error: "Please select a JPEG, PNG, or WebP image.",
+          error: "Please select a JPEG, PNG, WebP, HEIC, or HEIF image.",
         };
       }
 
       if (
         params.imageFile.size === 0 ||
-        params.imageFile.size > 4 * 1024 * 1024
+        params.imageFile.size > MAX_IMAGE_SIZE
       ) {
         return {
           success: false,
-          error: "Image must be smaller than 4 MB.",
+          error: "Image must be 20 MB or smaller.",
         };
       }
 
@@ -219,7 +227,7 @@ export async function UpdatePost(
         await tx.orm.public.PostImage.where({ postId }).delete();
 
         if (imageData && params.imageFile) {
-          await tx.orm.public.PostImage.create({
+          await tx.orm.public.PostImage.select("id").create({
             postId,
             data: imageData,
             contentType: params.imageFile.type,
@@ -271,27 +279,23 @@ export async function UploadPostImage(
       return { success: false, error: "Invalid wishlist item." };
     }
 
-    const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-
-    if (!allowedTypes.includes(file.type)) {
+    if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
       return {
         success: false,
-        error: "Please select a JPEG, PNG, WebP, or GIF image.",
+        error: "Please select a JPEG, PNG, WebP, HEIC, or HEIF image.",
       };
     }
 
-    const maxSize = 4 * 1024 * 1024;
-
-    if (file.size === 0 || file.size > maxSize) {
+    if (file.size === 0 || file.size > MAX_IMAGE_SIZE) {
       return {
         success: false,
-        error: "Image must be smaller than 4 MB.",
+        error: "Image must be 20 MB or smaller.",
       };
     }
 
     const imageData = new Uint8Array(await file.arrayBuffer());
 
-    await db.orm.public.PostImage.create({
+    await db.orm.public.PostImage.select("id").create({
       postId,
       data: imageData,
       contentType: file.type,

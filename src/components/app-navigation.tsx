@@ -50,7 +50,7 @@ export default function AppNavigation({ isOwner }: AppNavigationProps) {
       ];
 
   return (
-    <header className="sticky top-0 z-40 mb-6 border-b border-border/70 bg-background/90 shadow-sm backdrop-blur-xl">
+    <header className="sticky rounded top-0 z-40 mb-6 border-b border-border/70 bg-background/90 shadow-sm backdrop-blur-xl">
       <div className="mx-auto flex min-h-16 max-w-350 items-center justify-between gap-3 px-3 py-2 sm:px-5">
         <Link
           href="/"

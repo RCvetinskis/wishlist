@@ -18,6 +18,7 @@ import type { getPosts } from "@/src/services/posts";
 import { DeletePost, ReservePost, UnreserverPost } from "../actions/post";
 import { toast } from "@/components/ui/toast";
 import { useI18n } from "@/src/components/i18n";
+import { capitalize } from "../utils/helpers";
 
 type PostCardProps = {
   post: Awaited<ReturnType<typeof getPosts>>["posts"][number];
@@ -82,7 +83,7 @@ const PostCard = ({ post, currentUserId, isOwner }: PostCardProps) => {
   }
 
   return (
-    <Card className="overflow-hidden">
+    <Card className="overflow-hidden bg-transparent shadow shadow-primary">
       <div className="relative aspect-4/3 w-full bg-muted">
         {post.image ? (
           <Image
@@ -91,6 +92,7 @@ const PostCard = ({ post, currentUserId, isOwner }: PostCardProps) => {
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover"
+            loading="eager"
           />
         ) : post.imageUrl ? (
           <Image
@@ -99,6 +101,7 @@ const PostCard = ({ post, currentUserId, isOwner }: PostCardProps) => {
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover"
+            loading="eager"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
@@ -117,7 +120,7 @@ const PostCard = ({ post, currentUserId, isOwner }: PostCardProps) => {
       <CardHeader>
         <CardTitle className="line-clamp-2">{post.title}</CardTitle>
         <p className="text-sm text-muted-foreground">
-          {t("itemAddedBy", { name: post.author.username })}
+          {t("itemAddedBy", { name: capitalize(post.author.username) })}
         </p>
       </CardHeader>
 
@@ -158,7 +161,7 @@ const PostCard = ({ post, currentUserId, isOwner }: PostCardProps) => {
 
       <CardFooter className="pt-6 mt-auto">
         <div className="w-full space-y-2">
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             {isReserved && !isReservedByMe ? (
               <Button className="flex-1" disabled>
                 {t("alreadyReserved")}

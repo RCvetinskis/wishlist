@@ -1,16 +1,11 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { getCurrentUser } from "@/src/services/users";
 import { capitalize } from "@/src/utils/helpers";
 import { LocalizedText } from "@/src/components/i18n";
 import { getPosts } from "@/src/services/posts";
 import PostsControls from "./posts/_components/posts-controls";
 import PostCard from "@/src/components/post-card";
+import Hero from "@/src/components/hero";
 import { redirect } from "next/navigation";
 type Props = {
   searchParams: Promise<{
@@ -37,45 +32,35 @@ const HomePage = async ({ searchParams }: Props) => {
   const { posts, hasMore } = await getPosts(page, search);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="text-2xl">
-          <p>
-            <LocalizedText
-              message="welcome"
-              values={{ name: capitalize(currentUser.username) }}
-            />
-          </p>
-        </CardTitle>
-        <CardDescription>
-          <LocalizedText message="homeDescription" />
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-5">
-        <PostsControls
-          search={search}
-          page={page}
-          hasMore={hasMore}
-          basePath="/"
-        />
-        {posts.length > 0 ? (
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-3 2xl:grid-cols-4">
-            {posts.map((item) => (
-              <PostCard
-                key={item.id}
-                post={item}
-                currentUserId={currentUser.id}
-                isOwner={currentUser.status === "owner"}
-              />
-            ))}
-          </div>
-        ) : (
-          <p className="py-8 text-center text-muted-foreground">
-            <LocalizedText message={search ? "noSearchResults" : "noPosts"} />
-          </p>
-        )}
-      </CardContent>
-    </Card>
+    <>
+      <Hero name={capitalize(currentUser.username)} />
+      <Card className="bg-transparent">
+        <CardContent className="space-y-5 py-6">
+          <PostsControls
+            search={search}
+            page={page}
+            hasMore={hasMore}
+            basePath="/"
+          />
+          {posts.length > 0 ? (
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-3 2xl:grid-cols-4">
+              {posts.map((item) => (
+                <PostCard
+                  key={item.id}
+                  post={item}
+                  currentUserId={currentUser.id}
+                  isOwner={currentUser.status === "owner"}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="py-8 text-center text-muted-foreground">
+              <LocalizedText message={search ? "noSearchResults" : "noPosts"} />
+            </p>
+          )}
+        </CardContent>
+      </Card>
+    </>
   );
 };
 
