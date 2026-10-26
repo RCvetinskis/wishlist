@@ -18,7 +18,7 @@ import type { getPosts } from "@/src/services/posts";
 import { DeletePost, ReservePost, UnreserverPost } from "../actions/post";
 import { toast } from "@/components/ui/toast";
 import { useI18n } from "@/src/components/i18n";
-import { API_URL } from "../utils/constants";
+
 type PostCardProps = {
   post: Awaited<ReturnType<typeof getPosts>>["posts"][number];
   currentUserId: number;
@@ -86,7 +86,7 @@ const PostCard = ({ post, currentUserId, isOwner }: PostCardProps) => {
       <div className="relative aspect-4/3 w-full bg-muted">
         {post.image ? (
           <Image
-            src={`${API_URL}/api/posts/${post.id}/image`}
+            src={`/api/posts/${post.id}/image`}
             alt={post.title}
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
