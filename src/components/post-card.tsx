@@ -32,7 +32,6 @@ const PostCard = ({ post, currentUserId, isOwner }: PostCardProps) => {
   const [isContentExpanded, setIsContentExpanded] = useState(false);
 
   const [isPending, startTransition] = useTransition();
-
   const isReserved = reservedById !== null;
   const isReservedByMe = reservedById === currentUserId;
   const isAuthor = isOwner && post.authorId === currentUserId;
