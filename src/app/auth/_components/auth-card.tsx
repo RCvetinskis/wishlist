@@ -78,12 +78,12 @@ const AuthCard = () => {
             autoFocus
             minLength={3}
             maxLength={24}
-            pattern="[A-Za-z0-9_-]{3,24}"
+            pattern="[A-Za-z0-9ĄČĘĖĮŠŲŪŽąčęėįšųūž_\-]{3,24}"
             title={t("usernameTitle")}
             value={username}
             onChange={(event) => {
               event.currentTarget.setCustomValidity("");
-              setUsername(event.target.value);
+              setUsername(event.target.value.normalize("NFC"));
             }}
             onInvalid={(event) =>
               event.currentTarget.setCustomValidity(t("usernameTitle"))

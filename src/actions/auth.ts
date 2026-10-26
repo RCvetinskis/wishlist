@@ -6,9 +6,9 @@ import { createHash, randomBytes } from "node:crypto";
 const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
 
 export async function createOrAuthenticateUser(username: string) {
-  const normalizedUsername = username.trim().toLowerCase();
+  const normalizedUsername = username.trim().normalize("NFC").toLowerCase();
 
-  if (!/^[a-z0-9_-]{3,24}$/.test(normalizedUsername)) {
+  if (!/^[a-z0-9_ąčęėįšųūž-]{3,24}$/.test(normalizedUsername)) {
     throw new Error("Username must be 3–24 characters.");
   }
 
