@@ -52,7 +52,12 @@ const HomePage = async ({ searchParams }: Props) => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-5">
-        <PostsControls search={search} page={page} hasMore={hasMore} />
+        <PostsControls
+          search={search}
+          page={page}
+          hasMore={hasMore}
+          basePath="/"
+        />
         {posts.length > 0 ? (
           <div className="grid grid-cols-1 gap-3 md:grid-cols-3 2xl:grid-cols-4">
             {posts.map((item) => (

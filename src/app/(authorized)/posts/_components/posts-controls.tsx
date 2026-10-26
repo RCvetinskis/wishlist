@@ -12,19 +12,23 @@ type PostsControlsProps = {
   search: string;
   page: number;
   hasMore: boolean;
+  basePath: string;
 };
 
-function pageHref(page: number, search: string) {
+function pageHref(page: number, search: string, basePath: string) {
   const params = new URLSearchParams();
   if (search) params.set("search", search);
   params.set("page", String(page));
-  return `/posts?${params.toString()}`;
+
+  const path = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
+  return `${path}?${params.toString()}`;
 }
 
 export default function PostsControls({
   search,
   page,
   hasMore,
+  basePath,
 }: PostsControlsProps) {
   const { t } = useI18n();
   const router = useRouter();
@@ -38,7 +42,8 @@ export default function PostsControls({
     if (search) params.set("search", search);
     params.set("page", "1");
 
-    router.push(`/posts?${params.toString()}`);
+    const path = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
+    router.push(`${path}?${params.toString()}`);
   }
 
   return (
@@ -55,7 +60,7 @@ export default function PostsControls({
         <Button type="submit">{t("search")}</Button>
         {search && (
           <Link
-            href="/posts"
+            href={basePath}
             className={buttonVariants({ variant: "outline" })}
           >
             {t("clearSearch")}
@@ -70,7 +75,7 @@ export default function PostsControls({
         >
           {page > 1 ? (
             <Link
-              href={pageHref(page - 1, search)}
+              href={pageHref(page - 1, search, basePath)}
               className={buttonVariants({ variant: "outline" })}
             >
               {t("previousPage")}
@@ -85,7 +90,7 @@ export default function PostsControls({
           </span>
           {hasMore ? (
             <Link
-              href={pageHref(page + 1, search)}
+              href={pageHref(page + 1, search, basePath)}
               className={buttonVariants({ variant: "outline" })}
             >
               {t("nextPage")}
