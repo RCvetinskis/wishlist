@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import Image from "next/image";
 
 import {
   Card,
@@ -12,7 +11,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 
 import type { getPosts } from "@/src/services/posts";
 import { DeletePost, ReservePost, UnreserverPost } from "../actions/post";
@@ -20,6 +18,7 @@ import { toast } from "@/components/ui/toast";
 import { useI18n } from "@/src/components/i18n";
 import { capitalize } from "../utils/helpers";
 import { Ribbon } from "./ribbon";
+import ImagePreview from "./image-preview";
 import { cn } from "cn";
 
 type PostCardProps = {
@@ -100,20 +99,16 @@ const PostCard = ({ post, currentUserId, isOwner }: PostCardProps) => {
 
       <div className="relative aspect-4/3 w-full bg-muted">
         {post.image ? (
-          <Image
+          <ImagePreview
             src={`/api/posts/${post.id}/image`}
             alt={post.title}
-            fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover"
           />
         ) : post.imageUrl ? (
-          <Image
+          <ImagePreview
             src={post.imageUrl}
             alt={post.title}
-            fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="object-cover"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-muted-foreground">

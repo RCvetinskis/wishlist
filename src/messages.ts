@@ -26,6 +26,7 @@ const english = {
   pageNumber: "Page {{page}}",
   pagination: "Pagination",
   closeToast: "Close notification",
+  closeImagePreview: "Close image preview",
   welcome: "Welcome, {{name}}, to Wishlist",
   welcomeGuest: "Welcome to Wishlist",
   heroImageAlt: "Nastia smiling outdoors",
@@ -146,6 +147,7 @@ const lithuanian: Record<keyof typeof english, string> = {
   pageNumber: "Puslapis {{page}}",
   pagination: "Puslapiavimas",
   closeToast: "Uždaryti pranešimą",
+  closeImagePreview: "Uždaryti nuotraukos peržiūrą",
   welcome: "Sveiki atvykę į pageidavimų sąrašą, {{name}}",
   welcomeGuest: "Sveiki atvykę į pageidavimų sąrašą",
   heroImageAlt: "Nastia šypsosi lauke",
@@ -211,8 +213,7 @@ const lithuanian: Record<keyof typeof english, string> = {
   uploadedFileSelected: "Pasirinktas nuotraukos failas",
   currentUploadedImage: "Dabartinė įkelta nuotrauka",
   removeImage: "Pašalinti nuotrauką",
-  chooseSupportedImage:
-    "Pasirinkite JPG, PNG, WebP, HEIC arba HEIF nuotrauką.",
+  chooseSupportedImage: "Pasirinkite JPG, PNG, WebP, HEIC arba HEIF nuotrauką.",
   imageTooLarge: "Nuotrauka turi būti ne didesnė nei {{size}} MB.",
   loginRequiredCreate:
     "Norėdami pridėti pageidaujamą prekę, turite prisijungti.",
@@ -273,6 +274,7 @@ const russian: Record<keyof typeof english, string> = {
   pageNumber: "Страница {{page}}",
   pagination: "Пагинация",
   closeToast: "Закрыть уведомление",
+  closeImagePreview: "Закрыть просмотр изображения",
   welcome: "Добро пожаловать в список желаний, {{name}}",
   welcomeGuest: "Добро пожаловать в список желаний",
   heroImageAlt: "Настя улыбается на улице",
