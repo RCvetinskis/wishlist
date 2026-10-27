@@ -45,3 +45,4 @@ Thumbs.db
 # Local certificates and keys
 *.pem
 *.key
+.prisma/

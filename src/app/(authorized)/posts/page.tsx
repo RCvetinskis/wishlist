@@ -1,7 +1,6 @@
-import PostCard from "@/src/components/post-card";
+import PostsList from "@/src/components/posts-list";
 import { getCurrentUserPosts } from "@/src/services/posts";
 import { getCurrentUser } from "@/src/services/users";
-import { LocalizedText } from "@/src/components/i18n";
 import PostsControls from "./_components/posts-controls";
 import { redirect } from "next/navigation";
 
@@ -40,22 +39,12 @@ const PostsPage = async ({ searchParams }: Props) => {
         hasMore={hasMore}
         basePath="/posts"
       />
-      {posts.length > 0 ? (
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-3 2xl:grid-cols-4">
-          {posts.map((item) => (
-            <PostCard
-              key={item.id}
-              post={item}
-              currentUserId={currentUser.id}
-              isOwner
-            />
-          ))}
-        </div>
-      ) : (
-        <p className="py-8 text-center text-muted-foreground">
-          <LocalizedText message={search ? "noSearchResults" : "noPosts"} />
-        </p>
-      )}
+      <PostsList
+        posts={posts}
+        currentUserId={currentUser.id}
+        isOwner
+        search={search}
+      />
     </div>
   );
 };

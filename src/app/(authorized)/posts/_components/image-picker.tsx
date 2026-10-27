@@ -114,7 +114,7 @@ export default function ImagePicker({
         <p className="text-sm text-muted-foreground">{t("imageHelp")}</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="flex flex-wrap justify-center items-center gap-3">
         <Button
           type="button"
           variant={mode === "upload" ? "secondary" : "outline"}

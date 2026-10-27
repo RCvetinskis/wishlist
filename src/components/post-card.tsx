@@ -19,6 +19,8 @@ import { DeletePost, ReservePost, UnreserverPost } from "../actions/post";
 import { toast } from "@/components/ui/toast";
 import { useI18n } from "@/src/components/i18n";
 import { capitalize } from "../utils/helpers";
+import { Ribbon } from "./ribbon";
+import { cn } from "cn";
 
 type PostCardProps = {
   post: Awaited<ReturnType<typeof getPosts>>["posts"][number];
@@ -83,7 +85,19 @@ const PostCard = ({ post, currentUserId, isOwner }: PostCardProps) => {
   }
 
   return (
-    <Card className="overflow-hidden bg-transparent shadow shadow-primary">
+    <Card
+      className={cn(
+        "relative overflow-hidden bg-transparent shadow-md shadow-primary",
+        isReserved && "shadow-secondary",
+      )}
+    >
+      <Ribbon
+        variant={isReserved ? "secondary" : "primary"}
+        position="diagonal-right"
+      >
+        {isReserved ? t("reserved") : t("available")}
+      </Ribbon>
+
       <div className="relative aspect-4/3 w-full bg-muted">
         {post.image ? (
           <Image
@@ -92,7 +106,6 @@ const PostCard = ({ post, currentUserId, isOwner }: PostCardProps) => {
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover"
-            loading="eager"
           />
         ) : post.imageUrl ? (
           <Image
@@ -101,20 +114,12 @@ const PostCard = ({ post, currentUserId, isOwner }: PostCardProps) => {
             fill
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="object-cover"
-            loading="eager"
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
             {t("noImage")}
           </div>
         )}
-
-        <Badge
-          className="absolute right-3 top-3"
-          variant={isReserved ? "secondary" : "default"}
-        >
-          {isReserved ? t("reserved") : t("available")}
-        </Badge>
       </div>
 
       <CardHeader>
@@ -129,21 +134,23 @@ const PostCard = ({ post, currentUserId, isOwner }: PostCardProps) => {
           <div>
             <p
               id={`post-content-${post.id}`}
-              className={`${isContentExpanded ? "" : "line-clamp-6"} whitespace-pre-wrap text-sm text-muted-foreground`}
+              className={`${isContentExpanded ? "" : "line-clamp-2"} whitespace-pre-wrap text-sm text-muted-foreground`}
             >
               {post.content}
             </p>
-            <Button
-              type="button"
-              variant="link"
-              size="xs"
-              aria-expanded={isContentExpanded}
-              aria-controls={`post-content-${post.id}`}
-              className="mt-1 px-0"
-              onClick={() => setIsContentExpanded((expanded) => !expanded)}
-            >
-              {isContentExpanded ? t("showLess") : t("showMore")}
-            </Button>
+            {post.content.length > 50 && (
+              <Button
+                type="button"
+                variant="link"
+                size="xs"
+                aria-expanded={isContentExpanded}
+                aria-controls={`post-content-${post.id}`}
+                className="mt-1 px-0"
+                onClick={() => setIsContentExpanded((expanded) => !expanded)}
+              >
+                {isContentExpanded ? t("showLess") : t("showMore")}
+              </Button>
+            )}
           </div>
         )}
 
@@ -159,45 +166,47 @@ const PostCard = ({ post, currentUserId, isOwner }: PostCardProps) => {
         )}
       </CardContent>
 
-      <CardFooter className="pt-6 mt-auto">
-        <div className="w-full space-y-2">
-          <div className="flex flex-wrap gap-2">
-            {isReserved && !isReservedByMe ? (
-              <Button className="flex-1" disabled>
+      <CardFooter className="mt-auto px-1">
+        <div className="flex flex-wrap gap-2 mx-auto w-full">
+          {isReserved && !isReservedByMe ? (
+            <Button variant={"secondary"} className="min-w-0 flex-1" disabled>
+              <span className="block min-w-0 max-w-full truncate">
                 {t("alreadyReserved")}
-              </Button>
-            ) : (
-              <Button
-                className="flex-1"
-                variant={isReservedByMe ? "outline" : "default"}
-                disabled={isPending}
-                onClick={handleReservation}
-              >
+              </span>
+            </Button>
+          ) : (
+            <Button
+              className="min-w-0 flex-1"
+              variant={isReservedByMe ? "outline" : "default"}
+              disabled={isPending}
+              onClick={handleReservation}
+            >
+              <span className="block min-w-0 max-w-full truncate">
                 {isPending
                   ? t("pleaseWait")
                   : isReservedByMe
                     ? t("cancelReservation")
                     : t("reserveItem")}
+              </span>
+            </Button>
+          )}
+          {isAuthor && (
+            <>
+              <Link
+                href={`/posts/create/${post.id}`}
+                className={buttonVariants({ variant: "outline" })}
+              >
+                {t("edit")}
+              </Link>
+              <Button
+                variant="destructive"
+                disabled={isPending}
+                onClick={handleDelete}
+              >
+                {t("delete")}
               </Button>
-            )}
-            {isAuthor && (
-              <>
-                <Link
-                  href={`/posts/create/${post.id}`}
-                  className={buttonVariants({ variant: "outline" })}
-                >
-                  {t("edit")}
-                </Link>
-                <Button
-                  variant="destructive"
-                  disabled={isPending}
-                  onClick={handleDelete}
-                >
-                  {t("delete")}
-                </Button>
-              </>
-            )}
-          </div>
+            </>
+          )}
         </div>
       </CardFooter>
     </Card>

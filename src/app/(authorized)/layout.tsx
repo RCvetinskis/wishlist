@@ -17,7 +17,7 @@ const AuthorizedLayout = async ({ children }: Props) => {
   return (
     <div>
       <AppNavigation isOwner={user.status === "owner"} />
-      <main className="app-background rounded mx-auto min-h-screen w-full max-w-350 px-2 pb-8 sm:px-4">
+      <main className="app-background rounded mx-auto min-h-screen w-full max-w-350 px-0.5 pb-8 sm:px-4">
         {children}
       </main>
     </div>

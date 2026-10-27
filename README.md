@@ -22,7 +22,7 @@ The starter users are inserted idempotently from `src/prisma/seed.ts` on the fir
 
 ## Languages
 
-The interface supports English and Lithuanian. It follows a saved language choice when present, otherwise it detects the browser language and defaults to Lithuanian. Use the language selector in the top-right corner to switch languages.
+The interface supports Russian, English, and Lithuanian. Russian is selected by default unless a language choice has already been saved. Use the language selector in the top-right corner to switch languages.
 
 ## Prisma
 

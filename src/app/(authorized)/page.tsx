@@ -1,16 +1,16 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { getCurrentUser } from "@/src/services/users";
 import { capitalize } from "@/src/utils/helpers";
-import { LocalizedText } from "@/src/components/i18n";
 import { getPosts } from "@/src/services/posts";
 import PostsControls from "./posts/_components/posts-controls";
-import PostCard from "@/src/components/post-card";
+import PostsList from "@/src/components/posts-list";
 import Hero from "@/src/components/hero";
 import { redirect } from "next/navigation";
 type Props = {
   searchParams: Promise<{
     page?: string | string[];
     search?: string | string[];
+    reservedByMe?: string | string[];
   }>;
 };
 const HomePage = async ({ searchParams }: Props) => {
@@ -25,39 +25,41 @@ const HomePage = async ({ searchParams }: Props) => {
   const rawSearch = Array.isArray(params.search)
     ? params.search[0]
     : params.search;
+  const rawReservedByMe = Array.isArray(params.reservedByMe)
+    ? params.reservedByMe[0]
+    : params.reservedByMe;
   const parsedPage = Number(rawPage);
   const page =
     Number.isSafeInteger(parsedPage) && parsedPage > 0 ? parsedPage : 1;
   const search = rawSearch?.trim().slice(0, 100) ?? "";
-  const { posts, hasMore } = await getPosts(page, search);
+  const reservedByMe = rawReservedByMe === "true";
+
+  const { posts, hasMore } = await getPosts(
+    page,
+    search,
+    reservedByMe ? currentUser.id : undefined,
+  );
 
   return (
     <>
       <Hero name={capitalize(currentUser.username)} />
-      <Card className="bg-transparent">
-        <CardContent className="space-y-5 py-6">
+      <Card className="bg-transparent p-0">
+        <CardContent className="space-y-5 my-2 px-1">
           <PostsControls
             search={search}
             page={page}
             hasMore={hasMore}
             basePath="/"
+            reservedByMe={reservedByMe}
+            showReservationFilter
           />
-          {posts.length > 0 ? (
-            <div className="grid grid-cols-1 gap-3 md:grid-cols-3 2xl:grid-cols-4">
-              {posts.map((item) => (
-                <PostCard
-                  key={item.id}
-                  post={item}
-                  currentUserId={currentUser.id}
-                  isOwner={currentUser.status === "owner"}
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="py-8 text-center text-muted-foreground">
-              <LocalizedText message={search ? "noSearchResults" : "noPosts"} />
-            </p>
-          )}
+          <PostsList
+            posts={posts}
+            currentUserId={currentUser.id}
+            isOwner={currentUser.status === "owner"}
+            search={search}
+            reservedByMe={reservedByMe}
+          />
         </CardContent>
       </Card>
     </>

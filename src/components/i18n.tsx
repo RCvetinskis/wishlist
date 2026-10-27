@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-export type Locale = "en" | "lt";
+export type Locale = "en" | "lt" | "ru";
 
 type I18nContextValue = {
   locale: Locale;
@@ -33,17 +33,14 @@ const LOCALE_STORAGE_KEY = "wishlist-locale";
 const LOCALE_CHANGE_EVENT = "wishlist-locale-change";
 
 function supportedLocale(value: string | null | undefined): Locale | null {
+  if (value?.toLowerCase().startsWith("ru")) return "ru";
   if (value?.toLowerCase().startsWith("lt")) return "lt";
   if (value?.toLowerCase().startsWith("en")) return "en";
   return null;
 }
 
 function getLocale(): Locale {
-  return (
-    supportedLocale(window.localStorage.getItem(LOCALE_STORAGE_KEY)) ??
-    supportedLocale(navigator.language) ??
-    "lt"
-  );
+  return supportedLocale(window.localStorage.getItem(LOCALE_STORAGE_KEY)) ?? "ru";
 }
 
 function subscribeToLocale(callback: () => void) {
@@ -55,7 +52,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const locale = useSyncExternalStore<Locale>(
     subscribeToLocale,
     getLocale,
-    () => "lt",
+    () => "ru",
   );
 
   useEffect(() => {
@@ -130,6 +127,7 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
+            <SelectItem value="ru">{compact ? "RU" : "Русский"}</SelectItem>
             <SelectItem value="lt">{compact ? "LT" : "Lietuvių"}</SelectItem>
             <SelectItem value="en">{compact ? "EN" : "English"}</SelectItem>
           </SelectGroup>

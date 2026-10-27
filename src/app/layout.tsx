@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html
       suppressHydrationWarning
-      lang="lt"
+      lang="ru"
       className={cn("font-sans", geist.variable)}
     >
       <head>

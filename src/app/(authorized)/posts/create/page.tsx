@@ -1,6 +1,6 @@
 import PostForm from "../_components/post-form";
 
-const CreatePostsPage = async () => {
+const CreatePostsPage = () => {
   return (
     <div className="mx-auto w-full md:max-w-lg">
       <PostForm />

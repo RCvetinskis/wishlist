@@ -6,11 +6,18 @@ import { getCurrentUser } from "./users";
 export const POSTS_PER_PAGE = 20;
 const MAX_SEARCH_LENGTH = 100;
 
-export async function getPosts(page = 1, search = "") {
+export async function getPosts(
+  page = 1,
+  search = "",
+  reservedByUserId?: number,
+) {
   const safePage = Number.isSafeInteger(page) && page > 0 ? page : 1;
   const query = search.trim().slice(0, MAX_SEARCH_LENGTH);
 
   let collection = db.orm.public.Post;
+  if (reservedByUserId !== undefined) {
+    collection = collection.where({ reservedById: reservedByUserId });
+  }
   if (query) {
     const pattern = `%${query}%`;
     collection = collection.where((post) =>

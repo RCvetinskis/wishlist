@@ -13,11 +13,19 @@ type PostsControlsProps = {
   page: number;
   hasMore: boolean;
   basePath: string;
+  reservedByMe?: boolean;
+  showReservationFilter?: boolean;
 };
 
-function pageHref(page: number, search: string, basePath: string) {
+function pageHref(
+  page: number,
+  search: string,
+  basePath: string,
+  reservedByMe: boolean,
+) {
   const params = new URLSearchParams();
   if (search) params.set("search", search);
+  if (reservedByMe) params.set("reservedByMe", "true");
   params.set("page", String(page));
 
   const path = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
@@ -29,6 +37,8 @@ export default function PostsControls({
   page,
   hasMore,
   basePath,
+  reservedByMe = false,
+  showReservationFilter = false,
 }: PostsControlsProps) {
   const { t } = useI18n();
   const router = useRouter();
@@ -40,6 +50,17 @@ export default function PostsControls({
     const params = new URLSearchParams();
 
     if (search) params.set("search", search);
+    if (reservedByMe) params.set("reservedByMe", "true");
+    params.set("page", "1");
+
+    const path = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
+    router.push(`${path}?${params.toString()}`);
+  }
+
+  function toggleReservedByMe() {
+    const params = new URLSearchParams();
+    if (search) params.set("search", search);
+    if (!reservedByMe) params.set("reservedByMe", "true");
     params.set("page", "1");
 
     const path = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
@@ -61,13 +82,25 @@ export default function PostsControls({
         <Button type="submit">{t("search")}</Button>
         {search && (
           <Link
-            href={basePath}
+            href={reservedByMe ? `${basePath}?reservedByMe=true` : basePath}
             className={buttonVariants({ variant: "outline" })}
           >
             {t("clearSearch")}
           </Link>
         )}
       </form>
+
+      {showReservationFilter && (
+        <Button
+          className=""
+          type="button"
+          variant={reservedByMe ? "secondary" : "outline"}
+          aria-pressed={reservedByMe}
+          onClick={toggleReservedByMe}
+        >
+          {reservedByMe ? t("showAllPosts") : t("showMyReservations")}
+        </Button>
+      )}
 
       {(page > 1 || hasMore) && (
         <nav
@@ -76,7 +109,7 @@ export default function PostsControls({
         >
           {page > 1 ? (
             <Link
-              href={pageHref(page - 1, search, basePath)}
+              href={pageHref(page - 1, search, basePath, reservedByMe)}
               className={buttonVariants({ variant: "outline" })}
             >
               {t("previousPage")}
@@ -91,7 +124,7 @@ export default function PostsControls({
           </span>
           {hasMore ? (
             <Link
-              href={pageHref(page + 1, search, basePath)}
+              href={pageHref(page + 1, search, basePath, reservedByMe)}
               className={buttonVariants({ variant: "outline" })}
             >
               {t("nextPage")}

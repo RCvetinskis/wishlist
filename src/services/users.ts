@@ -1,8 +1,9 @@
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { createHash } from "node:crypto";
 import { db } from "../prisma/db";
 
-export async function getCurrentUser() {
+export const getCurrentUser = cache(async function getCurrentUser() {
   const cookieStore = await cookies();
   const token = cookieStore.get("session")?.value;
 
@@ -29,4 +30,4 @@ export async function getCurrentUser() {
   }).first();
 
   return user;
-}
+});

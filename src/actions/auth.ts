@@ -3,12 +3,13 @@
 import { cookies } from "next/headers";
 import { db } from "../prisma/db";
 import { createHash, randomBytes } from "node:crypto";
+import { usernameRegex } from "../utils/constants";
 const SESSION_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
 
 export async function createOrAuthenticateUser(username: string) {
   const normalizedUsername = username.trim().normalize("NFC").toLowerCase();
 
-  if (!/^[a-z0-9_ąčęėįšųūž-]{3,24}$/.test(normalizedUsername)) {
+  if (!usernameRegex.test(normalizedUsername)) {
     throw new Error("Username must be 3–24 characters.");
   }
 

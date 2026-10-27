@@ -78,7 +78,7 @@ const AuthCard = () => {
             autoFocus
             minLength={3}
             maxLength={24}
-            pattern="[A-Za-z0-9ĄČĘĖĮŠŲŪŽąčęėįšųūž_\-]{3,24}"
+            pattern="[A-Za-zА-Яа-яЁёĄČĘĖĮŠŲŪŽąčęėįšųūž0-9_\u{2D}]{3,24}"
             title={t("usernameTitle")}
             value={username}
             onChange={(event) => {
