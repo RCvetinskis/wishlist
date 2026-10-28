@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ImageIcon, Link2, Upload, X } from "lucide-react";
+import imageCompression from "browser-image-compression";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -26,6 +27,8 @@ const ACCEPTED_TYPES = [
   "image/heic",
   "image/heif",
 ];
+const MAX_COMPRESSED_SIZE_MB = 4;
+const MAX_COMPRESSED_SIZE = MAX_COMPRESSED_SIZE_MB * 1024 * 1024;
 
 export default function ImagePicker({
   value,
@@ -40,6 +43,7 @@ export default function ImagePicker({
   const [preview, setPreview] = useState("");
   const [error, setError] = useState("");
   const [isDragging, setIsDragging] = useState(false);
+  const [isCompressing, setIsCompressing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -50,8 +54,8 @@ export default function ImagePicker({
     };
   }, [preview]);
 
-  const selectFile = (file?: File) => {
-    if (!file) return;
+  const selectFile = async (file?: File) => {
+    if (!file || isCompressing) return;
 
     setError("");
 
@@ -65,12 +69,32 @@ export default function ImagePicker({
       return;
     }
 
-    const objectUrl = URL.createObjectURL(file);
+    setIsCompressing(true);
 
-    setPreview(objectUrl);
-    setMode("upload");
-    onChange("");
-    onFileChange(file);
+    try {
+      const compressedFile = await imageCompression(file, {
+        maxSizeMB: MAX_COMPRESSED_SIZE_MB,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+      });
+
+      if (compressedFile.size > MAX_COMPRESSED_SIZE) {
+        setError(t("imageCompressionFailed"));
+        return;
+      }
+
+      const objectUrl = URL.createObjectURL(compressedFile);
+
+      setPreview(objectUrl);
+      setMode("upload");
+      onChange("");
+      onFileChange(compressedFile);
+    } catch (compressionError) {
+      console.error("Image compression failed:", compressionError);
+      setError(t("imageCompressionFailed"));
+    } finally {
+      setIsCompressing(false);
+    }
   };
 
   const clearImage = () => {
@@ -147,7 +171,7 @@ export default function ImagePicker({
           onDrop={(event) => {
             event.preventDefault();
             setIsDragging(false);
-            selectFile(event.dataTransfer.files[0]);
+            void selectFile(event.dataTransfer.files[0]);
           }}
           className={`rounded-lg border-2 border-dashed p-6 text-center transition-colors ${
             isDragging
@@ -160,18 +184,26 @@ export default function ImagePicker({
             type="file"
             accept="image/*"
             className="hidden"
-            onChange={(event) => selectFile(event.target.files?.[0])}
+            disabled={isCompressing}
+            onChange={(event) => {
+              const file = event.currentTarget.files?.[0];
+              event.currentTarget.value = "";
+              void selectFile(file);
+            }}
           />
 
           <ImageIcon className="mx-auto mb-3 size-8 text-muted-foreground" />
 
-          <p className="text-sm font-medium">{t("dragDropImage")}</p>
+          <p className="text-sm font-medium">
+            {isCompressing ? t("compressingImage") : t("dragDropImage")}
+          </p>
           <p className="mt-1 text-sm text-muted-foreground">{t("or")}</p>
 
           <Button
             type="button"
             variant="secondary"
             className="mt-3"
+            disabled={isCompressing}
             onClick={() => fileInputRef.current?.click()}
           >
             {t("chooseFile")}

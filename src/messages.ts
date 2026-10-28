@@ -92,6 +92,9 @@ const english = {
   removeImage: "Remove image",
   chooseSupportedImage: "Choose a JPG, PNG, WebP, HEIC, or HEIF image.",
   imageTooLarge: "Image must be {{size}} MB or smaller.",
+  compressingImage: "Compressing image...",
+  imageCompressionFailed:
+    "Couldn't compress this image. Try converting it to JPEG or WebP and upload again.",
   loginRequiredCreate: "You must be logged in to create a wishlist item.",
   ownerRequired: "You must be owner to create a wishlist item.",
   titleRequired: "Item title is required.",
@@ -215,6 +218,9 @@ const lithuanian: Record<keyof typeof english, string> = {
   removeImage: "Pašalinti nuotrauką",
   chooseSupportedImage: "Pasirinkite JPG, PNG, WebP, HEIC arba HEIF nuotrauką.",
   imageTooLarge: "Nuotrauka turi būti ne didesnė nei {{size}} MB.",
+  compressingImage: "Nuotrauka glaudinama...",
+  imageCompressionFailed:
+    "Nepavyko suglaudinti nuotraukos. Konvertuokite ją į JPEG arba WebP ir bandykite dar kartą.",
   loginRequiredCreate:
     "Norėdami pridėti pageidaujamą prekę, turite prisijungti.",
   ownerRequired: "Norėdami pridėti prekę, turite būti sąrašo savininkas.",
@@ -343,6 +349,9 @@ const russian: Record<keyof typeof english, string> = {
   chooseSupportedImage:
     "Выберите изображение в формате JPG, PNG, WebP, HEIC или HEIF.",
   imageTooLarge: "Размер изображения не должен превышать {{size}} МБ.",
+  compressingImage: "Сжатие изображения...",
+  imageCompressionFailed:
+    "Не удалось сжать изображение. Конвертируйте его в JPEG или WebP и попробуйте снова.",
   loginRequiredCreate: "Войдите, чтобы добавить желание.",
   ownerRequired: "Добавлять товары может только владелец списка.",
   titleRequired: "Укажите название товара.",
