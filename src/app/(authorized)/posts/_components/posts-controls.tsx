@@ -68,7 +68,7 @@ export default function PostsControls({
   }
 
   return (
-    <div className="space-y-4 pt-2">
+    <div className="space-y-4 ">
       <form onSubmit={handleSearch} className="flex gap-2">
         <Input
           className="shadow shadow-primary"

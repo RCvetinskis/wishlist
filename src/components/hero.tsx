@@ -10,7 +10,7 @@ export default function Hero({ name }: HeroProps) {
   const { t } = useI18n();
 
   return (
-    <section className="mb-6 grid overflow-hidden rounded-2xl border bg-card shadow-sm md:grid-cols-[1fr_0.8fr]">
+    <section className="mb-6 grid overflow-hidden rounded-2xl border shadow-sm md:grid-cols-[1fr_0.8fr]">
       <div className="flex flex-col justify-center px-6 py-8 sm:px-10 sm:py-12">
         <p className="mb-3 text-sm font-semibold uppercase tracking-[0.18em] text-primary">
           Wishlist

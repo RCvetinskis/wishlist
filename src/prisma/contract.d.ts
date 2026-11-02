@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'162ad92a220e85d67c8e29aa8930a32a999111fa88627693839a65139d73086f'>;
+  StorageHashBase<'2c57aac1530b89891cc27497d7e5b73180318416725f55786cc50506102456f8'>;
 export type ExecutionHash =
   ExecutionHashBase<'00f0efff9be9cd99f6bb81f977b1454799b4d5b187297ada652f0d44edb7c502'>;
 export type ProfileHash =
@@ -320,13 +320,18 @@ export namespace Models {
   export type public_User = {
     createdAt: FieldOutputTypes['public']['User']['createdAt'];
     id: FieldOutputTypes['public']['User']['id'];
+    ownerId: FieldOutputTypes['public']['User']['ownerId'];
+    passwordHash: FieldOutputTypes['public']['User']['passwordHash'];
     status: FieldOutputTypes['public']['User']['status'];
+    subdomain: FieldOutputTypes['public']['User']['subdomain'];
     updatedAt: FieldOutputTypes['public']['User']['updatedAt'];
     username: FieldOutputTypes['public']['User']['username'];
+    guests: public_User[];
+    owner: public_User | null;
     posts: public_Post[];
     reservedPosts: public_Post[];
     sessions: public_Session[];
-    readonly [RelationKeys]?: 'posts' | 'reservedPosts' | 'sessions';
+    readonly [RelationKeys]?: 'guests' | 'owner' | 'posts' | 'reservedPosts' | 'sessions';
   };
 }
 
@@ -596,6 +601,18 @@ type ContractBase = Omit<
                   };
                   readonly many: false;
                 };
+                readonly ownerId: {
+                  readonly dataType: 'pg/int4';
+                  readonly codecId: 'pg/int4@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly passwordHash: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly status: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -604,6 +621,12 @@ type ContractBase = Omit<
                     readonly kind: 'literal';
                     readonly value: DefaultLiteralValue<'pg/text@1', 'guest'>;
                   };
+                  readonly many: false;
+                };
+                readonly subdomain: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly updatedAt: {
@@ -620,9 +643,32 @@ type ContractBase = Omit<
                 };
               };
               primaryKey: { readonly columns: readonly ['id'] };
-              uniques: readonly [{ readonly columns: readonly ['username'] }];
-              indexes: readonly [];
-              foreignKeys: readonly [];
+              uniques: readonly [
+                { readonly columns: readonly ['subdomain'] },
+                { readonly columns: readonly ['ownerId', 'username'] },
+              ];
+              indexes: readonly [
+                {
+                  readonly name: 'User_ownerId_idx_e2d0c1ef';
+                  readonly prefix: 'User_ownerId_idx';
+                  readonly columns: readonly ['ownerId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'User';
+                    readonly columns: readonly ['ownerId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'User';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
             };
           };
           readonly valueSet: {
@@ -857,8 +903,20 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
               };
+              readonly ownerId: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/int4@1' };
+              };
+              readonly passwordHash: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly status: {
                 readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly subdomain: {
+                readonly nullable: true;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
               readonly updatedAt: {
@@ -874,6 +932,23 @@ type ContractBase = Omit<
               };
             };
             readonly relations: {
+              readonly guests: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['ownerId'];
+                };
+              };
+              readonly owner: {
+                readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'User' };
+                readonly cardinality: 'N:1';
+                readonly nullable: true;
+                readonly on: {
+                  readonly localFields: readonly ['ownerId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
               readonly posts: {
                 readonly to: { readonly namespace: 'public' & NamespaceId; readonly model: 'Post' };
                 readonly cardinality: '1:N';
@@ -908,7 +983,10 @@ type ContractBase = Omit<
               readonly fields: {
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly id: { readonly column: 'id' };
+                readonly ownerId: { readonly column: 'ownerId' };
+                readonly passwordHash: { readonly column: 'passwordHash' };
                 readonly status: { readonly column: 'status' };
+                readonly subdomain: { readonly column: 'subdomain' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
                 readonly username: { readonly column: 'username' };
               };

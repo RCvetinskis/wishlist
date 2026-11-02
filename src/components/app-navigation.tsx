@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, List, Moon, Plus, Sun } from "lucide-react";
+import { Home, List, MailPlus, Moon, Plus, Sun } from "lucide-react";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { LanguageSwitcher, useI18n } from "@/src/components/i18n";
@@ -38,6 +38,12 @@ export default function AppNavigation({ isOwner }: AppNavigationProps) {
           label: t("createPost"),
           icon: Plus,
           isActive: pathname.startsWith("/posts/create"),
+        },
+        {
+          href: "/invitations",
+          label: t("invitations"),
+          icon: MailPlus,
+          isActive: pathname === "/invitations",
         },
       ]
     : [
@@ -93,7 +99,7 @@ export default function AppNavigation({ isOwner }: AppNavigationProps) {
               theme === "dark" ? t("switchToLight") : t("switchToDark")
             }
             title={theme === "dark" ? t("switchToLight") : t("switchToDark")}
-            className={cn("size-10")}
+            className={cn("size-6 md:size-10")}
           >
             {theme === "dark" ? (
               <Sun aria-hidden="true" />

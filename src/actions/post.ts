@@ -324,9 +324,15 @@ export async function ReservePost(postId: number) {
       };
     }
 
-    const post = await db.orm.public.Post.where({ id: postId }).update({
-      reservedById: user.id,
-    });
+    const ownerId = user.status === "owner" ? user.id : user.ownerId;
+    if (ownerId === null) {
+      return { success: false, error: "Wishlist not found." };
+    }
+
+    const post = await db.orm.public.Post.where({
+      id: postId,
+      authorId: ownerId,
+    }).update({ reservedById: user.id });
 
     if (!post) {
       return { success: false, error: "Post not found" };
@@ -354,9 +360,15 @@ export async function UnreserverPost(postId: number) {
       };
     }
 
+    const ownerId = user.status === "owner" ? user.id : user.ownerId;
+    if (ownerId === null) {
+      return { success: false, error: "Wishlist not found." };
+    }
+
     const post = await db.orm.public.Post.where({
       id: postId,
       reservedById: user.id,
+      authorId: ownerId,
     }).update({
       reservedById: null,
     });

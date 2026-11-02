@@ -7,21 +7,19 @@ type Props = {
   children: React.ReactNode;
 };
 
-const AuthorizedLayout = async ({ children }: Props) => {
+const UserLayout = async ({ children }: Props) => {
   const user = await getCurrentUser();
-
   if (!user) {
     redirect("/auth");
   }
-
   return (
     <div>
       <AppNavigation isOwner={user.status === "owner"} />
-      <main className="app-background rounded mx-auto min-h-screen w-full max-w-350 px-0.5 pb-8 sm:px-4">
+      <main className="app-background rounded mx-auto min-h-screen w-full max-w-400 px-0.5 pb-8 pt-2 sm:px-4">
         {children}
       </main>
     </div>
   );
 };
 
-export default AuthorizedLayout;
+export default UserLayout;

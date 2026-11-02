@@ -6,7 +6,12 @@ type Props = {
 };
 
 function SkeletonBlock({ className }: { className: string }) {
-  return <div aria-hidden="true" className={`animate-pulse rounded-md bg-muted ${className}`} />;
+  return (
+    <div
+      aria-hidden="true"
+      className={`animate-pulse rounded-md bg-muted ${className}`}
+    />
+  );
 }
 
 function PostsGridSkeleton() {
@@ -30,7 +35,7 @@ function PostsGridSkeleton() {
 export default function PostsPageSkeleton({ showHero = false }: Props) {
   const content = (
     <>
-      <div className="space-y-4 pt-2">
+      <div className="space-y-4 ">
         <div className="flex gap-2">
           <SkeletonBlock className="h-10 flex-1" />
           <SkeletonBlock className="h-10 w-24" />

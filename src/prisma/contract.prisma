@@ -5,16 +5,23 @@ enum Status {
   owner
 }
 model User {
-  id        Int      @id @default(autoincrement())
-  username  String    @unique
-  status        Status   @default(guest)
+  id           Int      @id @default(autoincrement())
+  username     String
+  subdomain    String?  @unique
+  passwordHash String?
+  status       Status   @default(guest)
+  ownerId      Int?
+  owner        User?    @relation("UserGuests", fields: [ownerId], references: [id], onDelete: Cascade)
+  guests       User[]   @relation("UserGuests")
 
-  posts     Post[]   @relation("PostAuthor")
-  reservedPosts Post[] @relation("PostReservation")
-  sessions     Session[]
-  
+  posts         Post[]   @relation("PostAuthor")
+  reservedPosts Post[]   @relation("PostReservation")
+  sessions      Session[]
+
   createdAt TimestamptzString @default(now())
   updatedAt temporal.updatedAtString()
+
+  @@unique([ownerId, username])
 }
 
 model Session {
