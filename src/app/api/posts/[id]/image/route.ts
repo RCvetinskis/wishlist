@@ -1,4 +1,5 @@
 import { db } from "@/src/prisma/db";
+import { getCurrentUser } from "@/src/services/users";
 
 export async function GET(
   _request: Request,
@@ -9,6 +10,24 @@ export async function GET(
 
   if (!Number.isInteger(postId) || postId <= 0) {
     return new Response("Invalid post ID", { status: 400 });
+  }
+
+  const user = await getCurrentUser();
+  if (!user) {
+    return new Response("Not found", { status: 404 });
+  }
+
+  const ownerId = user.status === "owner" ? user.id : user.ownerId;
+  if (ownerId === null) {
+    return new Response("Not found", { status: 404 });
+  }
+
+  const post = await db.orm.public.Post.where({
+    id: postId,
+    authorId: ownerId,
+  }).first();
+  if (!post) {
+    return new Response("Not found", { status: 404 });
   }
 
   const image = await db.sql.public.PostImage

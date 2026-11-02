@@ -1,7 +1,6 @@
 "use client";
 
 import { useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -10,7 +9,6 @@ import { useI18n } from "@/src/components/i18n";
 import { logoutAction } from "@/src/actions/auth";
 
 export default function LogoutButton() {
-  const router = useRouter();
   const { t } = useI18n();
   const [isPending, startTransition] = useTransition();
 
@@ -22,8 +20,7 @@ export default function LogoutButton() {
         return;
       }
 
-      router.replace("/auth");
-      router.refresh();
+      window.location.assign(result.redirectUrl);
     });
   };
 
@@ -35,10 +32,10 @@ export default function LogoutButton() {
       disabled={isPending}
       aria-label={isPending ? t("loggingOut") : t("logout")}
       title={isPending ? t("loggingOut") : t("logout")}
-      className="size-10 px-2 sm:w-auto sm:px-3"
+      className="size-6 md:size-10 px-2 md:w-auto md:px-3"
     >
       <LogOut aria-hidden="true" />
-      <span className="hidden sm:inline">
+      <span className="hidden md:inline">
         {isPending ? t("loggingOut") : t("logout")}
       </span>
     </Button>

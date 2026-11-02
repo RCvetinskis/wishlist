@@ -362,6 +362,20 @@
                   "kind": "scalar"
                 }
               },
+              "ownerId": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/int4@1",
+                  "kind": "scalar"
+                }
+              },
+              "passwordHash": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "status": {
                 "nullable": false,
                 "type": {
@@ -373,6 +387,13 @@
                   "entityName": "Status",
                   "namespaceId": "public",
                   "plane": "domain"
+                }
+              },
+              "subdomain": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
                 }
               },
               "updatedAt": {
@@ -391,6 +412,37 @@
               }
             },
             "relations": {
+              "guests": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "ownerId"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
+              "owner": {
+                "cardinality": "N:1",
+                "nullable": true,
+                "on": {
+                  "localFields": [
+                    "ownerId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "User",
+                  "namespace": "public"
+                }
+              },
               "posts": {
                 "cardinality": "1:N",
                 "on": {
@@ -445,8 +497,17 @@
                 "id": {
                   "column": "id"
                 },
+                "ownerId": {
+                  "column": "ownerId"
+                },
+                "passwordHash": {
+                  "column": "passwordHash"
+                },
                 "status": {
                   "column": "status"
+                },
+                "subdomain": {
+                  "column": "subdomain"
                 },
                 "updatedAt": {
                   "column": "updatedAt"
@@ -767,6 +828,16 @@
                   },
                   "nullable": false
                 },
+                "ownerId": {
+                  "codecId": "pg/int4@1",
+                  "dataType": "pg/int4",
+                  "nullable": true
+                },
+                "passwordHash": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
                 "status": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -782,6 +853,11 @@
                     "plane": "storage"
                   }
                 },
+                "subdomain": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
                 "updatedAt": {
                   "codecId": "pg/timestamptz-string@1",
                   "dataType": "pg/timestamptz",
@@ -793,8 +869,38 @@
                   "nullable": false
                 }
               },
-              "foreignKeys": [],
-              "indexes": [],
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "User_ownerId_idx_e2d0c1ef"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "ownerId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "User"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "User"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "ownerId"
+                  ],
+                  "name": "User_ownerId_idx_e2d0c1ef",
+                  "prefix": "User_ownerId_idx",
+                  "unique": false
+                }
+              ],
               "primaryKey": {
                 "columns": [
                   "id"
@@ -803,6 +909,12 @@
               "uniques": [
                 {
                   "columns": [
+                    "subdomain"
+                  ]
+                },
+                {
+                  "columns": [
+                    "ownerId",
                     "username"
                   ]
                 }
@@ -823,7 +935,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "162ad92a220e85d67c8e29aa8930a32a999111fa88627693839a65139d73086f"
+    "storageHash": "2c57aac1530b89891cc27497d7e5b73180318416725f55786cc50506102456f8"
   },
   "execution": {
     "executionHash": "00f0efff9be9cd99f6bb81f977b1454799b4d5b187297ada652f0d44edb7c502",

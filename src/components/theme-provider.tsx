@@ -3,7 +3,6 @@
 import {
   createContext,
   useContext,
-  useEffect,
   useSyncExternalStore,
   type ReactNode,
 } from "react";
@@ -19,6 +18,12 @@ const THEME_STORAGE_KEY = "wishlist-theme";
 const THEME_CHANGE_EVENT = "wishlist-theme-change";
 
 function getTheme(): Theme {
+  const cookieTheme = document.cookie
+    .split("; ")
+    .find((cookie) => cookie.startsWith(`${THEME_STORAGE_KEY}=`))
+    ?.split("=")[1];
+  if (cookieTheme === "dark" || cookieTheme === "light") return cookieTheme;
+
   const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
   if (savedTheme === "dark" || savedTheme === "light") return savedTheme;
 
@@ -32,25 +37,36 @@ function subscribeToTheme(callback: () => void) {
   return () => window.removeEventListener(THEME_CHANGE_EVENT, callback);
 }
 
-function setStoredTheme(theme: Theme) {
+function setStoredTheme(theme: Theme, cookieDomain?: string) {
   window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+  document.cookie = [
+    `${THEME_STORAGE_KEY}=${theme}`,
+    "Path=/",
+    "Max-Age=31536000",
+    "SameSite=Lax",
+    ...(cookieDomain ? [`Domain=${cookieDomain}`] : []),
+  ].join("; ");
   document.documentElement.classList.toggle("dark", theme === "dark");
   window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
 }
 
-export function ThemeProvider({ children }: { children: ReactNode }) {
+export function ThemeProvider({
+  children,
+  initialTheme,
+  cookieDomain,
+}: {
+  children: ReactNode;
+  initialTheme: Theme;
+  cookieDomain?: string;
+}) {
   const theme = useSyncExternalStore<Theme>(
     subscribeToTheme,
     getTheme,
-    () => "light",
+    () => initialTheme,
   );
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", theme === "dark");
-  }, [theme]);
-
   const toggleTheme = () => {
-    setStoredTheme(theme === "dark" ? "light" : "dark");
+    setStoredTheme(theme === "dark" ? "light" : "dark", cookieDomain);
   };
 
   return (

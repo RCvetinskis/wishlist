@@ -14,19 +14,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { loginAction } from "@/src/actions/auth";
+import { loginGuestAction } from "@/src/actions/auth";
 import { useI18n } from "@/src/components/i18n";
-import { useRouter } from "next/navigation";
 type FormSubmitEvent = Parameters<
   NonNullable<ComponentProps<"form">["onSubmit"]>
 >[0];
 
-const AuthCard = () => {
+const AuthCard = ({ ownerSubdomain }: { ownerSubdomain: string }) => {
   const { t, translateServerMessage } = useI18n();
   const [username, setUsername] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const router = useRouter();
 
   const handleSubmit = async (event: FormSubmitEvent) => {
     event.preventDefault();
@@ -38,13 +36,13 @@ const AuthCard = () => {
       setIsSubmitting(true);
       setError("");
 
-      const result = await loginAction(trimmedUsername);
+      const result = await loginGuestAction(trimmedUsername);
 
       if (!result.success) {
         setError(translateServerMessage(result.error));
         return;
       }
-      router.push("/");
+      window.location.assign(result.redirectUrl);
     } catch {
       setError(t("genericTryAgain"));
     } finally {
@@ -60,7 +58,7 @@ const AuthCard = () => {
         </div>
 
         <CardTitle className="text-2xl font-bold tracking-tight">
-          {t("welcomeToWishlist")}
+          {t("welcomeToWishlist", { name: ownerSubdomain })}
         </CardTitle>
 
         <CardDescription>{t("authDescription")}</CardDescription>

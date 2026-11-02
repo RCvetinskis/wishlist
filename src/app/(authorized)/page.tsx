@@ -41,9 +41,9 @@ const HomePage = async ({ searchParams }: Props) => {
   );
 
   return (
-    <>
+    <div className="pt-4">
       <Hero name={capitalize(currentUser.username)} />
-      <Card className="bg-transparent p-0">
+      <Card className="bg-transparent p-0 ">
         <CardContent className="space-y-5 my-2 px-1">
           <PostsControls
             search={search}
@@ -62,7 +62,7 @@ const HomePage = async ({ searchParams }: Props) => {
           />
         </CardContent>
       </Card>
-    </>
+    </div>
   );
 };
 

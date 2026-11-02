@@ -13,8 +13,18 @@ export async function getPosts(
 ) {
   const safePage = Number.isSafeInteger(page) && page > 0 ? page : 1;
   const query = search.trim().slice(0, MAX_SEARCH_LENGTH);
+  const user = await getCurrentUser();
 
-  let collection = db.orm.public.Post;
+  if (!user) {
+    throw new Error("Cannot load wishlist posts without an authenticated user.");
+  }
+
+  const ownerId = user.status === "owner" ? user.id : user.ownerId;
+  if (ownerId === null) {
+    throw new Error("Guest account is not associated with a wishlist owner.");
+  }
+
+  let collection = db.orm.public.Post.where({ authorId: ownerId });
   if (reservedByUserId !== undefined) {
     collection = collection.where({ reservedById: reservedByUserId });
   }
@@ -45,7 +55,11 @@ export async function getCurrentUserPosts(page = 1, search = "") {
   const safePage = Number.isSafeInteger(page) && page > 0 ? page : 1;
   const query = search.trim().slice(0, MAX_SEARCH_LENGTH);
   const user = await getCurrentUser();
-  let collection = db.orm.public.Post.where({ authorId: user?.id });
+  if (!user || user.status !== "owner") {
+    throw new Error("Only an authenticated owner can load their created posts.");
+  }
+
+  let collection = db.orm.public.Post.where({ authorId: user.id });
   if (query) {
     const pattern = `%${query}%`;
     collection = collection.where((post) =>

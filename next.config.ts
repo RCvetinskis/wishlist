@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  allowedDevOrigins: ["lvh.me", "*.lvh.me"],
   experimental: {
     serverActions: {
       bodySizeLimit: "21mb",

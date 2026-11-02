@@ -19,6 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { defaultLocale } from "../utils/constants";
 export type Locale = "en" | "lt" | "ru";
 
 type I18nContextValue = {
@@ -40,7 +41,10 @@ function supportedLocale(value: string | null | undefined): Locale | null {
 }
 
 function getLocale(): Locale {
-  return supportedLocale(window.localStorage.getItem(LOCALE_STORAGE_KEY)) ?? "ru";
+  return (
+    supportedLocale(window.localStorage.getItem(LOCALE_STORAGE_KEY)) ??
+    defaultLocale
+  );
 }
 
 function subscribeToLocale(callback: () => void) {
@@ -52,7 +56,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const locale = useSyncExternalStore<Locale>(
     subscribeToLocale,
     getLocale,
-    () => "ru",
+    () => defaultLocale,
   );
 
   useEffect(() => {
@@ -122,7 +126,11 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
           if (nextLocale) setLocale(nextLocale);
         }}
       >
-        <SelectTrigger id="language-switcher" aria-label={t("language")}>
+        <SelectTrigger
+          className="p-0.5 md:p-2"
+          id="language-switcher"
+          aria-label={t("language")}
+        >
           <SelectValue />
         </SelectTrigger>
         <SelectContent>

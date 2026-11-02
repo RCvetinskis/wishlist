@@ -32,7 +32,7 @@ const PostsPage = async ({ searchParams }: Props) => {
   const { posts, hasMore } = await getCurrentUserPosts(page, search);
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-5 ">
       <PostsControls
         search={search}
         page={page}
